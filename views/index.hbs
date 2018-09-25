@@ -1,0 +1,63 @@
+<div class="container">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <input class="form-control" id="user" type="text" placeholder="Ingrese usuario">
+        </div>
+
+        <div class="col-md-12">
+
+            <input class="form-control"  id="password" type="password" placeholder="Ingrese contraseña">
+
+        </div>
+
+        <div class="col-md-12">
+            <button id="ingresar" class="btn btn-success">
+                Ingresar
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    $(function(){
+
+
+        $("#ingresar").click(function(){
+
+            var user = $("#user").val().trim();
+            var pass = $("#password").val().trim();
+
+            if( user != "" && pass != ""){
+
+                $.ajax({
+                    method: "GET",
+                    url: "signup?" + "user=" + user + "&pass=" + pass,
+                    success: function(data){
+
+                        if(data){
+                            if(data.login){
+
+                                window.location.href = data.url;
+                            }else{
+                                //alert("falla")
+                                swal('Error',data.message,'error');
+                            }
+                        }
+                    }
+                });
+
+            }else{
+
+                swal('Error',data.message,'error');
+            }
+
+        });
+    });
+
+</script>
