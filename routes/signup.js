@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+
+
 Datastore = require('nedb');
 db = new Datastore({filename: 'DATA'});
 
@@ -25,6 +27,10 @@ router.get('/', function(req, res, next) {
         if(loginData !== [] && typeof(loginData) !== "undefined"){
 
             if(loginData.pass == pass && loginData.active){
+
+                req.session.user = loginData.user;
+                //console.log(req.session)
+
                 message.login = true;
                 message.url = "dashboard";
             }else{
