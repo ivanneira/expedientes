@@ -3,6 +3,41 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://10.64.65.200:27017/regulacion', { useNewUrlParser: true });
+
+
+
+var Schema = mongoose.Schema;
+
+
+
+var db = mongoose.connection;
+
+db.on('error', console.error.bind(console, 'connection error:'));
+
+db.once('open',function(){
+  console.log("conection successful")
+
+  var userSchema = new Schema({
+    user: String,
+    pass: String,
+    active: {type: Boolean, default: 'true'}
+  });
+  
+  userModel = mongoose.model('user', userSchema);
+
+
+/*
+  userModel.collection.insertOne(usss,function(e,d){
+    console.log(e)
+    console.log(d)
+  });
+*/
+
+});
+
 
 var indexRouter = require('./routes/index');
 var signupRouter = require('./routes/signup');
@@ -12,6 +47,7 @@ var logout = require('./routes/logout');
 var app = express();
 
 var session = require('express-session')
+
 app.use(session({
   secret: 'jsm',
   resave: false,
@@ -37,6 +73,15 @@ app.use(express.static(path.join(__dirname, '/node_modules/async/dist')));
 
 //ruta de sweet alert 2
 app.use(express.static(path.join(__dirname, '/node_modules/sweetalert2/dist')));
+
+//ruta de datatables.net - responsive - bs4
+app.use(express.static(path.join(__dirname, '/node_modules/datatables.net/')));
+
+//ruta de datatables.net - responsive
+//app.use(express.static(path.join(__dirname, '/node_modules/datatables.net-responsive/')));
+
+//ruta de datatables.net - responsive - bs4
+//app.use(express.static(path.join(__dirname, '/node_modules/datatables.net-responsive-bs4/')));
 
 app.use(logger('dev'));
 app.use(express.json());
