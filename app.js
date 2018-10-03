@@ -3,51 +3,24 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://10.64.65.200:27017/regulacion', { useNewUrlParser: true });
+//modelos de base de datos
+var models = require('./models')
 
-
-
-var Schema = mongoose.Schema;
-
-
-
-var db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'connection error:'));
-
-db.once('open',function(){
-  console.log("conection successful")
-
-  var userSchema = new Schema({
-    user: String,
-    pass: String,
-    active: {type: Boolean, default: 'true'}
-  });
-  
-  userModel = mongoose.model('user', userSchema);
-
-
-/*
-  userModel.collection.insertOne(usss,function(e,d){
-    console.log(e)
-    console.log(d)
-  });
-*/
-
-});
-
+//ruta para pruebas
+var test = require('./routes/test');
 
 var indexRouter = require('./routes/index');
 var signupRouter = require('./routes/signup');
 var dashboard = require('./routes/dashboard');
 var logout = require('./routes/logout');
+var data = require('./routes/data');
 
 var app = express();
 
 var session = require('express-session')
 
+//cookies de sesión
 app.use(session({
   secret: 'jsm',
   resave: false,
@@ -74,14 +47,24 @@ app.use(express.static(path.join(__dirname, '/node_modules/async/dist')));
 //ruta de sweet alert 2
 app.use(express.static(path.join(__dirname, '/node_modules/sweetalert2/dist')));
 
-//ruta de datatables.net - responsive - bs4
+//ruta de datatables.net 
 app.use(express.static(path.join(__dirname, '/node_modules/datatables.net/')));
 
+//ruta de datatables.net - responsive - bs4
+app.use(express.static(path.join(__dirname, '/node_modules/datatables.net-bs4/')));
+
 //ruta de datatables.net - responsive
-//app.use(express.static(path.join(__dirname, '/node_modules/datatables.net-responsive/')));
+app.use(express.static(path.join(__dirname, '/node_modules/datatables.net-responsive/')));
 
 //ruta de datatables.net - responsive - bs4
-//app.use(express.static(path.join(__dirname, '/node_modules/datatables.net-responsive-bs4/')));
+app.use(express.static(path.join(__dirname, '/node_modules/datatables.net-responsive-bs4/')));
+
+//ruta de datatables selection
+app.use(express.static(path.join(__dirname, '/node_modules/datatables.net-select/')));
+
+
+//ruta de datatables selection dt
+app.use(express.static(path.join(__dirname, '/node_modules/datatables.net-select-dt/')));
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -89,10 +72,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/test', test);
+
 app.use('/', indexRouter);
 app.use('/signup', signupRouter);
 app.use('/dashboard', dashboard);
 app.use('/logout', logout);
+app.use('/data', data);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
